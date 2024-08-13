@@ -1,0 +1,609 @@
+Main
+---------
+package com.wu.ecommerce;
+
+import java.util.Optional;
+import java.util.Scanner;
+
+import com.wu.ecommerce.dto.Product;
+import com.wu.ecommerce.exception.DataNotFoundException;
+import com.wu.ecommerce.exception.IdNotFoundException;
+import com.wu.ecommerce.exception.InvalidIdException;
+import com.wu.ecommerce.exception.InvalidPriceException;
+import com.wu.ecommerce.service.ProductService;
+import com.wu.ecommerce.service.ProductServiceImpl;
+
+public class Main {
+	
+//	public static void main(String[] args) {
+//		//int res = test();
+//		//System.out.println("res "+ res);
+//		
+//		try {
+//			Product product1=new Product("ab", "abc",0, "cat1");
+//			ProductService productService=ProductServiceImpl.getInstance();
+//			productService.addProduct(product1);
+//			//Product optional=productService.getEmployeeByProductId("ab");
+//			/*if(optional.isPresent()) {
+//				System.out.println(optional.get());
+//			}*/
+//			
+//			
+//			System.out.println("------------");
+//			System.out.println(product1);
+//			System.out.println(product1.toString());
+//			System.out.println(product1.hashCode());
+//			System.out.println(Integer.toHexString(product1.hashCode()));
+//			System.out.println(product1.getCategoryName());
+//			
+//		}
+//		catch(InvalidIdException e){
+//			e.printStackTrace();
+//		}
+//		catch(InvalidPriceException e) {
+//			e.printStackTrace();
+//		}
+//		
+//	}
+	
+	
+	
+	
+	public static void main(String[] args) throws Exception {
+		Scanner sc=new Scanner(System.in);
+		int choice=0;
+		while(true) {
+			System.out.println("enter the choice");
+			choice=sc.nextInt();
+			Product product1=new Product("ab", "abc",0, "cat1");
+			Product product2=new Product("ab", "abc",0, "cat1");
+			Product product3=new Product("ab", "abc",0, "cat1");
+			Product product4=new Product("ab", "abc",0, "cat1");
+			Product product5=new Product("ab", "abc",0, "cat1");
+			ProductService productService=ProductServiceImpl.getInstance();
+			switch(choice) {
+			case 1:
+				//add new product
+				productService.addProduct(product1);
+				break;
+			case 2:
+				//getEmployeeByProductId 
+				/*Product optional=productService.getEmployeeByProductId("ab");
+				if(optional.isPresent()) {
+					System.out.println(optional.get());
+				}*/
+				System.out.println(productService.getEmployeeByProductId("ab"));
+				break;
+			case 3:
+				//getProducts
+				System.out.println(productService.getProducts());
+				break;
+			case 4:
+				//getAllProductsByCategory
+				System.out.println(productService.getAllProductsByCategory("cat1"));
+				break;
+			case 5:
+				//removeProductByProductId
+				System.out.println(productService.removeProductByProductId("ab"));
+				break;
+			default:
+				break;
+			}
+		}
+	
+	
+	
+	}
+	}
+
+
+
+
+
+
+
+
+
+
+Product
+---------
+package com.wu.ecommerce.dto;
+
+import com.wu.ecommerce.exception.InvalidIdException;
+import com.wu.ecommerce.exception.InvalidPriceException;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
+
+//@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
+
+@NoArgsConstructor
+public class Product {
+
+	public Product(String productId, String productName, float price, String categoryName)
+			throws InvalidIdException, InvalidPriceException {
+		super();
+		this.setProductId(productId);
+		this.productName = productName;
+		this.setPrice(price);
+		this.categoryName = categoryName;
+	}
+
+	private String productId;
+
+	public void setProductId(String productId) throws InvalidIdException {
+		if (productId == null || productId.equals("") || productId.length() > 3) {
+			throw new InvalidIdException("id is invalid");
+		}
+		this.productId = productId;
+	}
+
+	@Setter
+	private String productName;
+	@Setter
+	@Exclude
+	private float price;
+
+	public Product(float price) throws InvalidPriceException {
+		if (price <= 0)
+			throw new InvalidPriceException("price is invalid");
+		this.price = price;
+	}
+
+	@Setter
+	private String categoryName;
+
+}
+
+
+
+
+
+
+idnotfoundexception
+----------------------
+package com.wu.ecommerce.exception;
+
+public class IdNotFoundException extends Exception {
+	public IdNotFoundException(String msg) {
+		super(msg);
+	}
+	public String toString() {
+		return super.getMessage();
+	}
+}
+
+
+
+
+
+invalididexception
+-------------------------
+package com.wu.ecommerce.exception;
+
+public class InvalidIdException extends Exception {
+	public InvalidIdException(String msg) {
+		super(msg);
+	}
+	public String toString() {
+		return super.getMessage();
+	}
+}
+
+
+
+
+
+invalidpriceexception
+-----------------------
+package com.wu.ecommerce.exception;
+
+public class InvalidPriceException extends Exception {
+	public InvalidPriceException(String msg) {
+		super(msg);
+	}
+	public String toString() {
+		return super.getMessage();
+	}
+}
+
+
+
+
+
+
+productrepository
+-----------------------
+package com.wu.ecommerce.repo;
+
+import java.util.Optional;
+
+import com.wu.ecommerce.dto.Product;
+import com.wu.ecommerce.exception.IdNotFoundException;
+
+public interface ProductRepository {
+	public Product addProduct(Product product);
+	public Product getEmployeeByProductId(String id) throws Exception;
+	
+	
+	public Optional<Product[]> getProducts();
+	public Optional<Product[]> getAllProductsByCategory(String cat);
+	
+	public String removeProductByProductId(String id);
+	public Product updateProductByProductId(String id, Product product);
+	
+	default void display() {
+		System.out.println("hello from interface");
+	}
+}
+
+
+
+
+poductrepositoryimpl
+-------------------------
+package com.wu.ecommerce.repo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import com.wu.ecommerce.dto.Product;
+import com.wu.ecommerce.exception.DataNotFoundException;
+import com.wu.ecommerce.exception.IdNotFoundException;
+import com.wu.ecommerce.utils.IdComparator;
+
+public class ProductRepositoryImpl implements ProductRepository {
+private ProductRepositoryImpl() {
+	// TODO Auto-generated constructor stub
+}
+//private Product[] products=new Product[10];
+//private TreeSet<Product> products=new TreeSet<Product>((arg0, arg1)->arg0.getProductName().compareTo(arg1.getProductName()));
+public int compare(Product arg0, Product arg1) {
+	return arg0.getProductName().compareTo(arg1.getProductName());
+}
+
+
+
+//private TreeSet<Product> products=new TreeSet<Product>((arg0, arg1)->arg0.getProductName().compareTo(arg1.getProductName()));
+private TreeSet<Product> products=new TreeSet<Product>(new Comparator<Product>() {
+
+	@Override
+	public int compare(Product o1, Product o2) {
+		// TODO Auto-generated method stub
+		return o1.getProductName().compareTo(o2.getProductName());
+	}
+});
+private static ProductRepository productRepository;
+private static int counter=-1;
+
+public static ProductRepository getInstance() {
+	if(productRepository ==null) {
+		//create the object
+		productRepository = new ProductRepositoryImpl();
+		
+	}
+	return productRepository;
+}
+
+@Override
+public Product addProduct(Product product) {
+	// TODO Auto-generated method stub
+	boolean result=products.add(product);
+	if(result)
+		return product;
+	else return null;
+}
+
+
+@Override
+public Set<Product> getProducts() throws DataNotFoundException {
+	// TODO Auto-generated method stub
+	return (Set<Product>) Optional.ofNullable(products).filter(l -> !l.isEmpty()).orElseThrow(()->new DataNotFoundException("Data not found"));
+	
+}
+
+@Override
+public Set<Product> getAllProductsByCategory(String cat) throws DataNotFoundException {
+	// TODO Auto-generated method stub
+	Set<Product> temp = (Set<Product>) products.stream().filter(e-> e.getCategoryName().equals(cat)).collect(Collectors.toList());
+	return (Set<Product>) Optional.ofNullable(temp).filter(l -> !l.isEmpty()).orElseThrow(()->new DataNotFoundException("Data not found"));
+}
+
+@Override
+public String removeProductByProductId(String id) throws Exception {
+	// TODO Auto-generated method stub
+	Product product=this.getEmployeeByProductId(id);
+	boolean result =products.remove(product);
+	if(result)
+		return "success";
+	else
+		return "fail";
+	
+}
+
+@Override
+public Product updateProductByProductId(String id, Product product) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Product getEmployeeByProductId(String id) throws Exception {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+
+}
+
+
+
+
+
+
+productservice
+----------------
+package com.wu.ecommerce.service;
+
+import java.util.Optional;
+
+import com.wu.ecommerce.dto.Product;
+
+public interface ProductService {
+	public Product addProduct(Product product);
+	public Product getEmployeeByProductId(String id) throws Exception;
+	
+	public Optional<Product[]> getProducts();
+	public Optional<Product[]> getAllProductsByCategory(String cat);
+	
+	public String removeProductByProductId(String id);
+	public Product updateProductByProductId(String id, Product product);
+	
+}
+
+
+
+
+
+
+
+productserviceimpl
+-------------------
+package com.wu.ecommerce.service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
+import com.wu.ecommerce.dto.Product;
+import com.wu.ecommerce.exception.DataNotFoundException;
+import com.wu.ecommerce.repo.ProductRepository;
+import com.wu.ecommerce.repo.ProductRepositoryImpl;
+
+public class ProductServiceImpl implements ProductService {
+	private ProductServiceImpl(){
+		//constructor
+	}
+	
+	private ProductRepository productRepository = ProductRepositoryImpl.getInstance();
+	private static ProductService productService;
+	public static ProductService getInstance() {
+		if(productService ==null) {
+			productService=new ProductServiceImpl();
+		}
+		return productService;
+	}
+	
+	@Override
+	public Product addProduct(Product product) {
+		// TODO Auto-generated method stub
+		return productRepository.addProduct(product);
+	}
+
+	@Override
+	public Product getEmployeeByProductId(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return productRepository.getEmployeeByProductId(id);
+	}
+
+	@Override
+	public TreeSet<Product> getProducts() throws DataNotFoundException {
+		// TODO Auto-generated method 
+		return (TreeSet<Product>) productRepository.getProducts();
+	}
+
+	@Override
+	public TreeSet<Product> getAllProductsByCategory(String cat) throws DataNotFoundException {
+		// TODO Auto-generated method stub
+		return (TreeSet<Product>) productRepository.getAllProductsByCategory(cat);
+	}
+
+	@Override
+	public String removeProductByProductId(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Product updateProductByProductId(String id, Product product) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+
+
+
+
+
+
+pom.xml
+---------
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.wu</groupId>
+  <artifactId>ecommerce</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <dependencies>
+  	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.32</version>
+    <scope>provided</scope>
+</dependency>
+  	<dependency>
+  	<!-- https://mvnrepository.com/artifact/com.oracle/ojdbc14 -->
+<dependency>
+    <groupId>com.oracle</groupId>
+    <artifactId>ojdbc14</artifactId>
+    <version>10.2.0.4.0</version>
+</dependency>
+  	
+  	</dependency>
+  </dependencies>
+</project>
+
+
+
+
+application.properties
+-----------------------
+jdbc.url=jdbc:oracle:thin:@localhost:1521/XE
+jdbc.username=System
+jdbc.passowrd=System
+
+
+
+
+
+DBUtils
+-----------
+package com.wu.ecommerce.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
+public class DBUtils {
+	public static void main(String[] args) {
+		Properties properties=getInstance().loadProperties();
+		System.out.println(properties);
+	}
+	private DBUtils() {
+		
+	}
+	private static DBUtils dbUtils;
+	public static DBUtils getInstance() {
+		if(dbUtils==null)
+			dbUtils = new DBUtils();
+		return dbUtils;
+	}
+	public Connection getConnection() throws SQLException {
+		Properties properties=loadProperties();
+		Connection connection=DriverManager.getConnection(properties.getProperty("jdbc.url"), properties.getProperty("jdbc.username"), properties.getProperty("jdbc.password"));
+		
+		return connection;
+	}
+	public void closeConnection(Connection connection) {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private Properties loadProperties() {
+		Properties properties=new Properties();
+		try (InputStream inputstream =DBUtils.class.getClassLoader().getResourceAsStream("application.properties")){
+			properties.load(inputstream);
+		}
+		catch(IOException i) {
+			System.out.println("Exception cought");
+		}
+		return properties;
+	}
+}
+
+
+
+
+
+
+
+FunctionalInterfaceDemo
+------------------------
+package com.wu.ecommerce;
+
+@FunctionalInterface
+public interface FunctionalInterfaceDemo {
+	public int add(int a, int b);
+	default void test() {
+		System.out.println("test");
+	}
+	default void test1() {
+		System.out.println("test1");
+
+	}
+	default void test2() {
+		System.out.println("test2");
+
+	}
+	
+}
+class Test{
+	public static void main(String[] args) {
+		getResult((a,b)->a+b);
+	}
+
+	private static void getResult(FunctionalInterfaceDemo demo) {
+		// TODO Auto-generated method stub
+		int result=demo.add(10, 20);
+		System.out.println(result);
+		
+	}
+}
+
+
+
+
+
+IdComparator
+--------------
+package com.wu.ecommerce.utils;
+
+import java.util.Comparator;
+
+import com.wu.ecommerce.dto.Product;
+
+public class IdComparator implements Comparator<Product> {
+
+	@Override
+	public int compare(Product arg0, Product arg1) {
+		// TODO Auto-generated method stub
+		return arg0.getProductId().compareTo(arg1.getProductId());
+	}
+
+}
+

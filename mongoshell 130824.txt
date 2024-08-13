@@ -1,0 +1,179 @@
+Please enter a MongoDB connection string (Default: mongodb://localhost/): localhost:27017
+localhost:27017
+Current Mongosh Log ID: 66bb05cfba6ceb7c69228fb4
+Connecting to:          mongodb://localhost:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.15
+Using MongoDB:          7.0.12
+Using Mongosh:          2.2.15
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+------
+   The server generated these startup warnings when booting
+   2024-08-13T12:11:42.285+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show bds
+MongoshInvalidInputError: [COMMON-10001] 'bds' is not a valid argument for "show".
+test> show dbs
+admin   40.00 KiB
+config  60.00 KiB
+local   40.00 KiB
+test> db
+test
+test> use westun
+switched to db westun
+westun> show dbs
+admin    40.00 KiB
+config  108.00 KiB
+local    40.00 KiB
+westun> db.createCollection(first)
+ReferenceError: first is not defined
+westun> db.createCollection('first')
+{ ok: 1 }
+westun> show dbs
+admin    40.00 KiB
+config  108.00 KiB
+local    40.00 KiB
+westun    8.00 KiB
+westun> show collections
+first
+westun> db.getCollection('first').drop()
+true
+westun> show collections
+
+westun> db.dropDatabase('westun')
+{ ok: 1, dropped: 'westun' }
+westun> show dbs
+admin    40.00 KiB
+config  108.00 KiB
+local    40.00 KiB
+westun> use westun
+already on db westun
+westun> show dbs
+admin    40.00 KiB
+config  108.00 KiB
+local    40.00 KiB
+westun> db.createCollection('first')
+{ ok: 1 }
+westun> show collection
+MongoshInvalidInputError: [COMMON-10001] 'collection' is not a valid argument for "show".
+westun> show collections
+first
+westun> db.createCollection('second')
+{ ok: 1 }
+westun> db.getCollection('first').insert()
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne, insertMany, or bulkWrite.
+MongoshInvalidInputError: [COMMON-10001] Missing required argument at position 0 (Collection.insert)
+westun> db.getCollection('first').insert({})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId('66bb0c4dba6ceb7c69228fb5') }
+}
+westun> db.getCollection('first').find({})
+[ { _id: ObjectId('66bb0c4dba6ceb7c69228fb5') } ]
+westun> db.getCollection('first').insertOne({})
+{
+  acknowledged: true,
+  insertedId: ObjectId('66bb0d04ba6ceb7c69228fb6')
+}
+westun> db.getCollection('first').find({})
+[
+  { _id: ObjectId('66bb0c4dba6ceb7c69228fb5') },
+  { _id: ObjectId('66bb0d04ba6ceb7c69228fb6') }
+]
+westun> db.getCollection('first').insertMany([{},{},{}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('66bb0d95ba6ceb7c69228fb7'),
+    '1': ObjectId('66bb0d95ba6ceb7c69228fb8'),
+    '2': ObjectId('66bb0d95ba6ceb7c69228fb9')
+  }
+}
+westun> db.getCollection('first').find({})
+[
+  { _id: ObjectId('66bb0c4dba6ceb7c69228fb5') },
+  { _id: ObjectId('66bb0d04ba6ceb7c69228fb6') },
+  { _id: ObjectId('66bb0d95ba6ceb7c69228fb7') },
+  { _id: ObjectId('66bb0d95ba6ceb7c69228fb8') },
+  { _id: ObjectId('66bb0d95ba6ceb7c69228fb9') }
+]
+westun>
+
+
+
+>db.getCollection('first').insertMany(......................................................)         .....GitHub
+
+db.getCollection('first').countDocuments()
+db.getCollection('first').find()
+db.getCollection('person').find({}).sort({"age":1})
+db.getCollection('person').find({}).sort({"age":1})
+db.getCollection('person').find({}).sort({"age":1})
+db.getCollection('test').find({})
+db.createCollection('person')
+
+db.getCollection('person').insertMany([,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+db.getCollection('person').find({}).sort({"age":1})
+db.cursor.find({}).limit(10).skip(15).sort({"index":-1})
+db.getCollection('person').find({}).sort({"age":1,"gender":-1}).limit(10)
+db.getCollection('person').find({}).sort({"age":1,"gender":-1}).limit(10)
+db.getCollection('person').find({}).sort({"age":1,"gender":-1}).limit(10)
+db.getCollection('person').find({"age":{"$eq":20}}).count()
+db.getCollection('person').find({"age":{"$ne":20}}).count()
+db.getCollection('person').find({"age":{"$lt":20}}).count()
+db.getCollection('person').find({"age":{"$gte":20}}).count()
+db.getCollection('person').find({"company.location.country":"USA"}).count()
+db.getCollection('person').find({"tags":"amet"})
+db.getCollection('person').find({"tags":{$all:["amet","ad"]}})
+db.getCollection('person').find({"tags":{$all:["amet","ad"]}}).count()
+db.getCollection('person').find({$and:[{"age":{"gt":20},"age":{"lt":40}}]})
+db.getCollection('person').find({$and:[{"age":{"gt":20},{"age":{"lt":40}}}]})
+db.getCollection('person').find({"$and":[{"gender":"male"},{"age":{"eq":40}}]}).count()
+db.getCollection('person').find({"$and":[{"gender":"male"},{"age":40}]}).count()
+db.person.find({"tags":"ad"})
+db.person.find({"tags":{"$size":4}})
+db.person.find({},{name:1,age:1,eyeColor:1})
+db.person.find({},{name:1,age:1,eyeColor:1}).count()
+db.person.find({"age":20},{name:1,age:1,eyeColor:1}).count()
+db.person.find({"age":20},{name:-1}).count()
+db.person.find({"age":20},{name:-1})
+db.person.find({"age":20},{name:0})
+
+
+db.first.insertMany([{},{}])
+db.first.countDocuments()
+10
+db.first.update({},{"$set":{"number":2000}})db.first.updateMany({},{"$set":{"string":"India","boolean":false}})
+db.first.updateMany({},{"$unset":{"number":1}})
+db.first.find()
+db.getCollection('person').updateMany({$and:[{"gender":"female"},{"age":25}]},{$set:{"age":27}})
+db.getCollection('person').updateMany({$and:[{"gender":"female"},{"age":25}]},{$set:{"age":27}})
+db.first.deleteMany({"eyeColor":"blue"})
+db.person.deleteMany({"eyeColor":"blue"})
+db.person.find({"favouriteFruit":{$ne:"apple"}})
+db.person.find({"favouriteFruit":{$ne:"apple"}}).count()
+db.person.find({"favouriteFruit":{$ne:"apple"}}).count
+
+db.person.deleteOne({"favouriteFruit":"apple"})
+db.person.deleteOne({"favouriteFruit":"apple"})
+db.person.deleteOne({"favoriteFruit":"apple"})
+db.person.find({}).count()
+db.person.aggregate([{$match:{"age":20}}])
+db.person.aggregate([{$match:{"age":20}},{$count:"cnt"}])
+db.person.aggregate([{$match:{"eyeColor":"green"}},{$count:"cnt"}])
+db.person.aggregate([{$group:{"_id":"gender"}},{$count: "cnt"}])
+db.person.aggregate([{$group:{"_id":"$gender"}},{$count: "cnt"}])
+db.person.aggregate([{$group:{"_id":"$gender"}}])
+db.person.aggregate([{$group:{"_id":"$eyeColor"}},{$count: "cnt"}])
+db.person.aggregate([{$project:{"_id":"$eyeColor"}},{$count: "cnt"}])
+db.person.aggregate([{$project:{"age":1,"_id":0}}])
+db.person.aggregate([{$match:{"age":{"$gt":30}}},{"$project":{"age":1,"eyeColor":1}}])
+
+
+
+
